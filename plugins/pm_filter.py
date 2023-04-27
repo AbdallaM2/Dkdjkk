@@ -493,12 +493,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
             alert = alert.replace("\\n", "\n").replace("\\t", "\t")
             await query.answer(alert, show_alert=True)
     if query.data.startswith("file"):
-        clicked = query.from_user.id
-        try:
-            typed = query.message.reply_to_message.from_user.id
-        except:
-            typed = query.from_user.id
-        ident, file_id = query.data.split("#")
+        ident, req, file_id = query.data.split("#")
+        if BUTTON_LOCK.strip().lower() in ["true", "yes", "1", "enable", "y"]:
+            if int(req) not in [query.from_user.id, 0]:
+                return await query.answer(BUTTON_LOCK_TEXT.format(query=query.from_user.first_name), show_alert=True)             
         files_ = await get_file_details(file_id)
         if not files_:
             return await query.answer('No such file exist.')
